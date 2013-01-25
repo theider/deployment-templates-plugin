@@ -61,6 +61,15 @@ public class TemplatesProcMojo extends AbstractMojo {
             log.info("deployment descriptor:" + descriptorFile);
             Deployment deployment = DeploymentSaxHandler.getDeployment(new FileInputStream(new File(descriptorFile)));
             log.info("loaded deployment:" + deployment);
+            // add target folders
+            log.info("creating target folders:" + deployment.getFolderNames().toString());
+            for(String folderName : deployment.getFolderNames()) {
+                File f = new File(folderName);
+                if(!f.exists()) {
+                    f.mkdir();
+                    log.info("--> created new folder:" + f.getAbsolutePath());
+                }
+            }            
             // process templates
             processTemplates(deployment,props);
             log.info("Finished processing templates.");

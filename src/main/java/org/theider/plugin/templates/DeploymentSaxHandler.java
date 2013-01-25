@@ -5,7 +5,6 @@ import java.io.InputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -17,8 +16,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class DeploymentSaxHandler extends DefaultHandler {
 
-    private static final Logger log = Logger.getLogger(DeploymentSaxHandler.class);
-    
     private Deployment deployment = null;
     
     private TemplateMapping templateMapping;
@@ -51,9 +48,10 @@ public class DeploymentSaxHandler extends DefaultHandler {
     
     protected enum ParserState {
         DEPLOYMENT,
-        TEMPLATE,
+        BODY,
         TEMPLATE_BODY,
         TEMPLATE_SOURCE,
+        FOLDER_BODY,
         DESTINATION_PATH;
     };
     
@@ -64,7 +62,6 @@ public class DeploymentSaxHandler extends DefaultHandler {
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         String data = new String(ch,start,length);
-        log.debug("characters state:" + parserState + ";chars:" + data + ";start:" + start + ";length:" + length);      
         switch(parserState) {
             case TEMPLATE_SOURCE:
                 templateMapping.setTemplateFilename(data);                
@@ -72,26 +69,31 @@ public class DeploymentSaxHandler extends DefaultHandler {
             case DESTINATION_PATH:
                 templateMapping.setDestinationFilename(data);
                 break;
+            case FOLDER_BODY:
+                deployment.getFolderNames().add(data);
+                break;
         }
     }
     
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        log.debug("startElement state:" + parserState + ";uri:" + uri + ";localName:" + localName + ";qName:" + qName + ";attributes:" + attributes);
         switch(parserState) {
             case DEPLOYMENT:
                 if(!qName.equals("deployment")) {
                     throw new SAXException("expecting root node to be deployment");
                 }
                 deployment = new Deployment();
-                parserState = ParserState.TEMPLATE;
+                parserState = ParserState.BODY;
                 break;
-            case TEMPLATE:
-                if(!qName.equals("template")) {
-                    throw new SAXException("expecting template node");
+            case BODY:
+                if(qName.equals("template")) {
+                    templateMapping = new TemplateMapping();
+                    parserState = ParserState.TEMPLATE_BODY;                                    
+                } else if(qName.equals("folder")) {
+                    parserState = ParserState.FOLDER_BODY;      
+                } else {
+                    throw new SAXException("expecting folder or template node and got " + qName);
                 }
-                templateMapping = new TemplateMapping();
-                parserState = ParserState.TEMPLATE_BODY;                
                 break;
             case TEMPLATE_BODY:
                 if(qName.equals("template-filename")) {
@@ -114,7 +116,6 @@ public class DeploymentSaxHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        log.debug("endElement state:" + parserState + ";endElement uri:" + uri + ";localName:" + localName + ";qName:" + qName);
         switch(parserState) {
             case TEMPLATE_SOURCE:
                 parserState = ParserState.TEMPLATE_BODY;
@@ -122,6 +123,12 @@ public class DeploymentSaxHandler extends DefaultHandler {
             case DESTINATION_PATH:
                 parserState = ParserState.TEMPLATE_BODY;
                 break;
+            case FOLDER_BODY:
+                if(qName.equals("folder")) {
+                    parserState = ParserState.BODY;
+                } else {
+                    throw new SAXException("missing end folder tag");
+                }
             case TEMPLATE_BODY:
                 if(qName.equals("template")) {
                     if(templateMapping.getDestinationFilename() == null) {
@@ -132,7 +139,7 @@ public class DeploymentSaxHandler extends DefaultHandler {
                     }
                     templateMapping.setExecutable(destFileExecutable);
                     deployment.getTemplateMappings().add(templateMapping);
-                    parserState = ParserState.TEMPLATE;
+                    parserState = ParserState.BODY;
                 }
                 break;                
         }
