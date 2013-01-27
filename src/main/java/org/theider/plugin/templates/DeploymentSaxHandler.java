@@ -108,7 +108,7 @@ public class DeploymentSaxHandler extends DefaultHandler {
                         destFileExecutable = execFile.equalsIgnoreCase("true");
                     }
                 } else {
-                    throw new SAXException("expecting root node to be deployment");   
+                    throw new SAXException("expecting template-filename or destination-filename nodes (got " + qName + ")");   
                 }                                    
                 break;                
         }
