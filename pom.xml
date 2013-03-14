@@ -15,7 +15,7 @@
     <scm>
         <connection>scm:git:git@github.com:theider/deployment-templates-plugin.git</connection>
         <url>scm:git:git@github.com:theider/deployment-templates-plugin.git</url>
-        <developerConnection>scm:git:git@github.com:theider/ deployment-templates-plugin.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:theider/deployment-templates-plugin.git</developerConnection>
         <tag>HEAD</tag>
     </scm>    
     <distributionManagement>
