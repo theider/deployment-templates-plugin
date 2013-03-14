@@ -4,7 +4,7 @@
 
     <groupId>org.theider</groupId>
     <artifactId>deployment-templates-plugin</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>deployment-templates-plugin</name>
@@ -13,6 +13,24 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <scm>
+        <connection>scm:git:git@github.com:theider/deployment-templates-plugin.git</connection>
+        <url>scm:git:git@github.com:theider/deployment-templates-plugin.git</url>
+        <developerConnection>scm:git:git@github.com:theider/ deployment-templates-plugin.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>    
+    <distributionManagement>
+        <repository>
+            <id>gandalf.preludevoice.com</id>
+            <name>gandalf.preludevoice.com-releases</name>
+            <url>http://artifacts.preludevoice.com:8081/artifactory/prelude-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>gandalf.preludevoice.com</id>
+            <name>gandalf.preludevoice.com-snapshots</name>
+            <url>http://artifacts.preludevoice.com:8081/artifactory/prelude-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>    
     <build>
         <plugins>            
             <plugin>
