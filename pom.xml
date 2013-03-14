@@ -3,7 +3,7 @@
 
     <groupId>org.theider</groupId>
     <artifactId>deployment-templates-plugin</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.10-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>deployment-templates-plugin</name>
