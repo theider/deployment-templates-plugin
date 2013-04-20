@@ -20,16 +20,16 @@
     </scm>    
     <distributionManagement>
         <repository>
-            <id>gandalf.preludevoice.com</id>
-            <name>gandalf.preludevoice.com-releases</name>
+            <id>ip-10-254-54-102.us-west-2.compute.internal</id>
+            <name>ip-10-254-54-102.us-west-2.compute.internal-releases</name>
             <url>http://artifacts.preludevoice.com:8081/artifactory/prelude-releases</url>
         </repository>
         <snapshotRepository>
-            <id>gandalf.preludevoice.com</id>
-            <name>gandalf.preludevoice.com-snapshots</name>
+            <id>ip-10-254-54-102.us-west-2.compute.internal</id>
+            <name>ip-10-254-54-102.us-west-2.compute.internal-snapshots</name>
             <url>http://artifacts.preludevoice.com:8081/artifactory/prelude-snapshots</url>
         </snapshotRepository>
-    </distributionManagement>    
+    </distributionManagement>
     <build>
         <plugins>            
             <plugin>
