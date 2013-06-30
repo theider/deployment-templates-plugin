@@ -3,15 +3,13 @@ package org.theider.plugin.templates;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author Tim
  */
 public class TemplateParser {
 
-    private final Logger log = Logger.getLogger(TemplateParser.class);
-    
     protected enum ParseState {
         parseText,
         parseVarStart,
@@ -24,7 +22,7 @@ public class TemplateParser {
         this.namespace = namespace;
     }
         
-    public String parseTemplate(String sourceText,List<TemplateVariable> vars) throws TemplateParseException {
+    public String parseTemplate(Log log, String sourceText,List<TemplateVariable> vars) throws TemplateParseException {
         final char[] source = sourceText.toCharArray();
         Map<String,TemplateVariable> varMap = new HashMap<String,TemplateVariable>();
         for(TemplateVariable v : vars) {

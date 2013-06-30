@@ -19,6 +19,8 @@ public class DeploymentSaxHandler extends DefaultHandler {
     private Deployment deployment = null;
     
     private TemplateMapping templateMapping;
+    
+    private FileMapping fileMapping;
 
     public Deployment getDeployment() {
         return deployment;    
@@ -50,6 +52,9 @@ public class DeploymentSaxHandler extends DefaultHandler {
         DEPLOYMENT,
         BODY,
         TEMPLATE_BODY,
+        FILE_BODY,
+        FILE_SOURCE_FILENAME,
+        FILE_DESTINATION_FILENAME,
         TEMPLATE_SOURCE,
         FOLDER_BODY,
         DESTINATION_PATH;
@@ -63,6 +68,12 @@ public class DeploymentSaxHandler extends DefaultHandler {
     public void characters(char[] ch, int start, int length) throws SAXException {
         String data = new String(ch,start,length);
         switch(parserState) {
+            case FILE_SOURCE_FILENAME:
+                fileMapping.setSourceFilename(data);
+                break;
+            case FILE_DESTINATION_FILENAME:
+                fileMapping.setDestinationFilename(data);
+                break;
             case TEMPLATE_SOURCE:
                 templateMapping.setTemplateFilename(data);                
                 break;
@@ -86,7 +97,10 @@ public class DeploymentSaxHandler extends DefaultHandler {
                 parserState = ParserState.BODY;
                 break;
             case BODY:
-                if(qName.equals("template")) {
+                if(qName.equals("file")) {
+                    fileMapping = new FileMapping();
+                    parserState = ParserState.FILE_BODY;                                    
+                } else if(qName.equals("template")) {
                     templateMapping = new TemplateMapping();
                     parserState = ParserState.TEMPLATE_BODY;                                    
                 } else if(qName.equals("folder")) {
@@ -111,6 +125,16 @@ public class DeploymentSaxHandler extends DefaultHandler {
                     throw new SAXException("expecting template-filename or destination-filename nodes (got " + qName + ")");   
                 }                                    
                 break;                
+            case FILE_BODY:
+                if(qName.equals("source-filename")) {                    
+                    parserState = ParserState.FILE_SOURCE_FILENAME;
+                } else
+                if(qName.equals("destination-filename")) {
+                    parserState = ParserState.FILE_DESTINATION_FILENAME;
+                } else {
+                    throw new SAXException("expecting template-filename or destination-filename nodes (got " + qName + ")");   
+                }                                    
+                break;                                
         }
     }
 
@@ -142,9 +166,26 @@ public class DeploymentSaxHandler extends DefaultHandler {
                     parserState = ParserState.BODY;
                 }
                 break;                
+            case FILE_SOURCE_FILENAME:
+                parserState = ParserState.FILE_BODY;
+                break;
+            case FILE_DESTINATION_FILENAME:
+                parserState = ParserState.FILE_BODY;
+                break;
+            case FILE_BODY:
+                if(qName.equals("file")) {
+                    if(fileMapping.getDestinationFilename() == null) {
+                        throw new SAXException("file mapping is missing destination filename");
+                    }
+                    if(fileMapping.getDestinationFilename() == null) {
+                        throw new SAXException("file mapping is missing source filename");
+                    }                    
+                    System.out.println("added " + fileMapping.toString());
+                    deployment.getFileMappings().add(fileMapping);
+                    parserState = ParserState.BODY;
+                }
+                break;                
         }
     }
 
-    
-    
 }

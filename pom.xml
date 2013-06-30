@@ -3,7 +3,7 @@
 
     <groupId>org.theider</groupId>
     <artifactId>deployment-templates-plugin</artifactId>
-    <version>1.0.11-SNAPSHOT</version>
+    <version>1.0.12-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>deployment-templates-plugin</name>
@@ -18,18 +18,36 @@
         <developerConnection>scm:git:git@github.com:theider/deployment-templates-plugin.git</developerConnection>
         <tag>HEAD</tag>
     </scm>    
-    <distributionManagement>
+    <repositories>
         <repository>
-            <id>ip-10-254-54-102.us-west-2.compute.internal</id>
-            <name>ip-10-254-54-102.us-west-2.compute.internal-releases</name>
-            <url>http://artifacts.preludevoice.com:8081/artifactory/prelude-releases</url>
+            <id>prelude-releases</id>
+            <name>prelude-releases</name>
+            <url>http://artifacts.preludevoice.com:8081/artifactory/prelude-releases</url>            
+            <snapshots>                
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
+        <repository>
+            <id>prelude-snapshots</id>
+            <name>prelude-snapshots</name>
+            <url>http://artifacts.preludevoice.com:8081/artifactory/prelude-snapshots</url>            
+            <snapshots>                
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>        
+    <distributionManagement>
         <snapshotRepository>
-            <id>ip-10-254-54-102.us-west-2.compute.internal</id>
-            <name>ip-10-254-54-102.us-west-2.compute.internal-snapshots</name>
+            <id>prelude-snapshots</id>
+            <name>prelude-snapshots</name>
             <url>http://artifacts.preludevoice.com:8081/artifactory/prelude-snapshots</url>
         </snapshotRepository>
-    </distributionManagement>
+        <repository>
+            <id>prelude-releases</id>
+            <name>prelude-releases</name>
+            <url>http://artifacts.preludevoice.com:8081/artifactory/prelude-releases</url>            
+        </repository>
+    </distributionManagement>    
     <build>
         <plugins>            
             <plugin>

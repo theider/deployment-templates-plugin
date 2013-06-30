@@ -11,10 +11,13 @@ public class Deployment {
 
     public Deployment() {
         templateMappings = new ArrayList<TemplateMapping>();
+        fileMappings = new ArrayList<FileMapping>();
         folderNames = new ArrayList<String>();
     }
     
     private final List<TemplateMapping> templateMappings;
+    
+    private final List<FileMapping> fileMappings;
     
     private final List<String> folderNames;
 
@@ -26,9 +29,13 @@ public class Deployment {
         return folderNames;
     }
 
+    public List<FileMapping> getFileMappings() {
+        return fileMappings;
+    }
+
     @Override
     public String toString() {
-        return "Deployment{" + "templateMappings=" + templateMappings + ", folderNames=" + folderNames + '}';
+        return "Deployment{" + "templateMappings=" + templateMappings + ", fileMappings=" + fileMappings + ", folderNames=" + folderNames + '}';
     }
-        
+    
 }

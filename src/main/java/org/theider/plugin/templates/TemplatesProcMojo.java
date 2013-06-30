@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +35,32 @@ public class TemplatesProcMojo extends AbstractMojo {
      * @parameter expression="${templateNamespace}"
      */    
     private String templateNamespace;
+    
+    protected void copyFile(File sourceFile,File destinationFile) throws IOException {
+        InputStream inStream = null;
+        OutputStream outStream = null;
+
+        try {
+
+            inStream = new FileInputStream(sourceFile);
+            outStream = new FileOutputStream(destinationFile);
+
+            byte[] buffer = new byte[8192];
+
+            int length;
+            //copy the file content in bytes 
+            while ((length = inStream.read(buffer)) > 0){
+                outStream.write(buffer, 0, length);
+            }
+        } finally {
+            if(inStream != null) {
+                inStream.close();
+            }
+            if(outStream != null) {
+                outStream.close();
+            }
+        }
+    }
     
     /**
      * Move templates into the installation from the defining XML     
@@ -72,6 +100,20 @@ public class TemplatesProcMojo extends AbstractMojo {
             }            
             // process templates
             processTemplates(deployment,props);
+            // add files
+            // add target folders
+            log.info("moving environment files");
+            for(FileMapping fmap : deployment.getFileMappings()) {
+                log.info("environmnt file:" + fmap.toString());
+                // dest is full path
+                File destinationFile = new File(fmap.getDestinationFilename());
+                String domainName = System.getProperty(templateNamespace + ".domain");
+                String environmentName = System.getProperty(templateNamespace + ".environment");
+                String sourceName = "environments" + File.separatorChar + domainName + File.separatorChar + environmentName + File.separatorChar + fmap.getSourceFilename();
+                File sourceFile = new File(sourceName);
+                log.info("file:" + sourceFile + " to " + destinationFile);
+                copyFile(sourceFile,destinationFile);
+            }                        
             log.info("Finished processing templates.");
         } catch (IOException ex) {
             throw new MojoFailureException("template processing error",ex);
@@ -107,7 +149,7 @@ public class TemplatesProcMojo extends AbstractMojo {
                 log.debug("var:" + tv);
                 vars.add(tv);
             }
-            String text = parser.parseTemplate(new String(data), vars);            
+            String text = parser.parseTemplate(log,new String(data), vars);            
             //log.info(text);            
             fin.close();
             File outputFile = new File(template.getDestinationFilename());
