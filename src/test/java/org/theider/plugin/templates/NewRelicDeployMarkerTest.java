@@ -27,9 +27,9 @@ public class NewRelicDeployMarkerTest extends TestCase {
      */
     public void testMarkDeployment() throws Exception {
         NewRelicDeployMarker marker = new NewRelicDeployMarker();
-        marker.markDeployment("357dafa4b65d3c70f4853fc4f622807120e111413d7d046", 
-                "realise-host.getaway.production",
-                "theider", 
-                "8.1.11-SNAPSHOT");
+//        marker.markDeployment("357dafa4b65d3c70f4853fc4f622807120e111413d7d046", 
+//                "realise-host.getaway.production",
+//                "theider", 
+//                "8.1.11-SNAPSHOT");
     }
 }
