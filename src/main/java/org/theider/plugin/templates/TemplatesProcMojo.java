@@ -36,6 +36,16 @@ public class TemplatesProcMojo extends AbstractMojo {
      */    
     private String templateNamespace;
     
+    /**
+     * @parameter expression="${newRelicApiKey}"
+     */    
+    private String newRelicApiKey;
+
+    /**
+     * @parameter expression="${newRelicApplicationName}"
+     */    
+    private String newRelicApplicationName;
+
     protected void copyFile(File sourceFile,File destinationFile) throws IOException {
         InputStream inStream = null;
         OutputStream outStream = null;
@@ -72,15 +82,36 @@ public class TemplatesProcMojo extends AbstractMojo {
         if(templateNamespace == null) {
             throw new MojoFailureException("templateNamespace must be defined.");
         }
+        String deploymentUser = null;
         try {
             log.info("Deployment template processor starting.");
             log.info("configuration file:" + configurationFile);
+            if(newRelicApiKey != null) {
+                log.info("New Relic license key:" + newRelicApiKey);
+                deploymentUser = System.getProperty("user.name");
+                if(deploymentUser != null) {
+                    log.info("deployment user=" + deploymentUser);
+                }
+            }
             File propFile = new File(configurationFile);
             Properties props = new Properties();
             props.load(new FileInputStream(propFile));
             log.info("----------------------------------------");
             log.info("deployment properties");
             log.info("----------------------------------------");
+            String deploymentDomainName = props.getProperty("realise.domain-name");
+            if(deploymentDomainName == null) {
+                throw new MojoFailureException("missing required property:realise.domain-name");
+            }
+            String deploymentEnvironment = props.getProperty("realise.environment");
+            if(deploymentEnvironment == null) {
+                throw new MojoFailureException("missing required property:realise.environment");
+            }
+            String deploymentVersion = System.getProperty("realise.version");
+            if(deploymentVersion == null) {
+                throw new MojoFailureException("missing required property:realise.version");
+            }            
+            log.info("DEPLOYMENT-PROFILE:" + deploymentDomainName + ":" + deploymentEnvironment + ":" + deploymentVersion);
             for (Iterator<Object> it = props.keySet().iterator(); it.hasNext();) {
                 String name = (String) it.next();
                 log.info("property " + name + "=" + props.getProperty(name));            
@@ -103,6 +134,7 @@ public class TemplatesProcMojo extends AbstractMojo {
             // add files
             // add target folders
             log.info("moving environment files");
+            
             for(FileMapping fmap : deployment.getFileMappings()) {
                 log.info("environmnt file:" + fmap.toString());
                 // dest is full path
@@ -115,8 +147,12 @@ public class TemplatesProcMojo extends AbstractMojo {
                 copyFile(sourceFile,destinationFile);
             }                        
             log.info("Finished processing templates.");
+            if(newRelicApiKey != null) {
+                NewRelicDeployMarker marker = new NewRelicDeployMarker();
+                marker.markDeployment(newRelicApiKey,newRelicApplicationName,deploymentUser,deploymentVersion);
+            }
         } catch (IOException ex) {
-            throw new MojoFailureException("template processing error",ex);
+            throw new MojoFailureException("deployment IO error",ex);
         }
     }
 
