@@ -30,6 +30,7 @@ public class NewRelicDeployMarker {
                                     deploymentUser,
                                     deploymentVersion
                                     );
+        log.info("New Relic deployment description:" + xmlPostText);
         connection.setRequestProperty("Content-Length", Integer.toString(xmlPostText.getBytes().length));
         connection.setRequestProperty("Content-Language", "en-US");
         connection.setRequestProperty("x-api-key", newRelicApiKey);
@@ -56,7 +57,7 @@ public class NewRelicDeployMarker {
         int responseCode = connection.getResponseCode();
         log.debug("response code:" + responseCode);        
         if(responseCode != 201) {
-            throw new IOException("response code:" + responseCode);                    
+            log.warn("deployment not marked:" + responseCode);
         }
     }
     
