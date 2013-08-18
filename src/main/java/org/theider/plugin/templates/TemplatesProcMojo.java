@@ -147,10 +147,11 @@ public class TemplatesProcMojo extends AbstractMojo {
                 copyFile(sourceFile,destinationFile);
             }                        
             log.info("Finished processing templates.");
-            if(newRelicApiKey != null) {
-                NewRelicDeployMarker marker = new NewRelicDeployMarker();
-                marker.markDeployment(newRelicApiKey,newRelicApplicationName,deploymentUser,deploymentVersion);
-            }
+// @TODO remove NR deployment marker
+//            if(newRelicApiKey != null) {
+//                NewRelicDeployMarker marker = new NewRelicDeployMarker();
+//                marker.markDeployment(newRelicApiKey,newRelicApplicationName,deploymentUser,deploymentVersion);
+//            }
         } catch (IOException ex) {
             throw new MojoFailureException("deployment IO error",ex);
         }
