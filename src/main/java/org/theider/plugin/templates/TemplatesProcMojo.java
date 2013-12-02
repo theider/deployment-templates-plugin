@@ -72,7 +72,7 @@ public class TemplatesProcMojo extends AbstractMojo {
         if(templateNamespace == null) {
             throw new MojoFailureException("templateNamespace must be defined.");
         }
-        String deploymentUser;
+        //String deploymentUser;
         try {
             log.info("Deployment template processor starting.");
             log.info("configuration file:" + configurationFile);
@@ -103,8 +103,7 @@ public class TemplatesProcMojo extends AbstractMojo {
             processTemplates(deployment,props);
             // add files
             // add target folders
-            log.info("moving environment files");
-            
+            log.info("moving environment files");            
             for(FileMapping fmap : deployment.getFileMappings()) {
                 log.info("environmnt file:" + fmap.toString());
                 // dest is full path
@@ -139,26 +138,41 @@ public class TemplatesProcMojo extends AbstractMojo {
             int L = fin.available();
             byte[] data = new byte[L];
             fin.read(data);
-            TemplateParser parser = new TemplateParser(templateNamespace);
-            List<TemplateVariable> vars = new ArrayList<TemplateVariable>();
-            for (Iterator<Object> it = props.keySet().iterator(); it.hasNext();) {
-                String name = (String) it.next();
-                String value = props.getProperty(name);
-                TemplateVariable tv = new TemplateVariable(name,value);
-                log.debug("var:" + tv);
-                vars.add(tv);
-            }
-            String text = parser.parseTemplate(log,new String(data), vars);            
-            //log.info(text);            
-            fin.close();
-            File outputFile = new File(template.getDestinationFilename());
-            FileOutputStream fout = new FileOutputStream(outputFile);
-            fout.write(text.getBytes());
-            fout.flush();
-            fout.close();
-            if(template.isExecutable()) {
-                log.info("marking output file as executable");
-                outputFile.setExecutable(true,false);
+            if( (template.getParseTemplate() == null) || template.getParseTemplate()) {
+                log.info("processing template " + template);
+                TemplateParser parser = new TemplateParser(templateNamespace);
+                List<TemplateVariable> vars = new ArrayList<TemplateVariable>();
+                for (Iterator<Object> it = props.keySet().iterator(); it.hasNext();) {
+                    String name = (String) it.next();
+                    String value = props.getProperty(name);
+                    TemplateVariable tv = new TemplateVariable(name,value);
+                    log.debug("var:" + tv);
+                    vars.add(tv);
+                }
+                String text = parser.parseTemplate(log,new String(data), vars);            
+                //log.info(text);            
+                fin.close();
+                File outputFile = new File(template.getDestinationFilename());
+                FileOutputStream fout = new FileOutputStream(outputFile);
+                fout.write(text.getBytes());
+                fout.flush();
+                fout.close();                
+                if(template.isExecutable()) {
+                    log.info("marking output file as executable");
+                    outputFile.setExecutable(true,false);
+                }                
+            } else {
+                log.info("processing template COPY " + template);
+                fin.close();
+                File outputFile = new File(template.getDestinationFilename());
+                FileOutputStream fout = new FileOutputStream(outputFile);
+                fout.write(data);
+                fout.flush();
+                fout.close();                                
+                if(template.isExecutable()) {
+                    log.info("marking output file as executable");
+                    outputFile.setExecutable(true,false);
+                }                
             }
         } catch (TemplateParseException ex) {
             throw new IOException("template parse failure",ex);

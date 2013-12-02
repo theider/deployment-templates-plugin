@@ -9,6 +9,15 @@ public class TemplateMapping {
     private String templateFilename;
     private String destinationFilename;
     private boolean executable;
+    private Boolean parseTemplate;
+
+    public Boolean getParseTemplate() {
+        return parseTemplate;
+    }
+
+    public void setParseTemplate(Boolean parseTemplate) {
+        this.parseTemplate = parseTemplate;
+    }    
 
     public boolean isExecutable() {
         return executable;
@@ -36,7 +45,7 @@ public class TemplateMapping {
 
     @Override
     public String toString() {
-        return "TemplateMapping{" + "templateFilename=" + templateFilename + ", destinationFilename=" + destinationFilename + ", executable=" + executable + '}';
+        return "TemplateMapping{" + "templateFilename=" + templateFilename + ", destinationFilename=" + destinationFilename + ", executable=" + executable + ", parseTemplate=" + parseTemplate + '}';
     }
     
 }

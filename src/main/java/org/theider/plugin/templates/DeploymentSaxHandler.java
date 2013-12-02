@@ -51,11 +51,12 @@ public class DeploymentSaxHandler extends DefaultHandler {
     protected enum ParserState {
         DEPLOYMENT,
         BODY,
+        TEMPLATE_SOURCE,
         TEMPLATE_BODY,
+        PARSE_TEMPLATE,
         FILE_BODY,
         FILE_SOURCE_FILENAME,
-        FILE_DESTINATION_FILENAME,
-        TEMPLATE_SOURCE,
+        FILE_DESTINATION_FILENAME,        
         FOLDER_BODY,
         DESTINATION_PATH;
     };
@@ -76,6 +77,14 @@ public class DeploymentSaxHandler extends DefaultHandler {
                 break;
             case TEMPLATE_SOURCE:
                 templateMapping.setTemplateFilename(data);                
+                break;
+            case PARSE_TEMPLATE:
+                String trueOrFalse = data;
+                if(trueOrFalse.equalsIgnoreCase("FALSE")) {
+                    templateMapping.setParseTemplate(Boolean.FALSE);
+                } else {
+                    templateMapping.setParseTemplate(Boolean.TRUE);
+                }
                 break;
             case DESTINATION_PATH:
                 templateMapping.setDestinationFilename(data);
@@ -110,11 +119,13 @@ public class DeploymentSaxHandler extends DefaultHandler {
                 }
                 break;
             case TEMPLATE_BODY:
-                if(qName.equals("template-filename")) {
+                if(qName.equals("parse-template")) {
+                    // true or false.
+                    parserState = ParserState.PARSE_TEMPLATE;
+                } else if(qName.equals("template-filename")) {
                     // template source
                     parserState = ParserState.TEMPLATE_SOURCE;
-                } else
-                if(qName.equals("destination-filename")) {
+                } else if(qName.equals("destination-filename")) {
                     parserState = ParserState.DESTINATION_PATH;
                     destFileExecutable = false;
                     String execFile = attributes.getValue("executable");
@@ -128,8 +139,7 @@ public class DeploymentSaxHandler extends DefaultHandler {
             case FILE_BODY:
                 if(qName.equals("source-filename")) {                    
                     parserState = ParserState.FILE_SOURCE_FILENAME;
-                } else
-                if(qName.equals("destination-filename")) {
+                } else if(qName.equals("destination-filename")) {
                     parserState = ParserState.FILE_DESTINATION_FILENAME;
                 } else {
                     throw new SAXException("expecting template-filename or destination-filename nodes (got " + qName + ")");   
@@ -141,6 +151,9 @@ public class DeploymentSaxHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         switch(parserState) {
+            case PARSE_TEMPLATE:
+                parserState = ParserState.TEMPLATE_BODY;
+                break;            
             case TEMPLATE_SOURCE:
                 parserState = ParserState.TEMPLATE_BODY;
                 break;

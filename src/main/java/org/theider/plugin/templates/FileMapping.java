@@ -8,7 +8,7 @@ public class FileMapping {
     
     private String sourceFilename;
     private String destinationFilename;
-
+    
     public String getSourceFilename() {
         return sourceFilename;
     }
