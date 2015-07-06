@@ -16,24 +16,14 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * @author Tim
  * @goal templates
  */
 public class TemplatesProcMojo extends AbstractMojo {
 
-    /**
-     * @parameter expression="${descriptorFile}" default-value="deployment-descriptor.xml"
-     */
     private String descriptorFile;
     
-    /**
-     * @parameter expression="${configurationFile}" default-value="deployment-configuration.properties"
-     */
     private String configurationFile;
     
-    /**
-     * @parameter expression="${templateNamespace}"
-     */    
     private String templateNamespace;
     
     protected void copyFile(File sourceFile,File destinationFile) throws IOException {
@@ -62,11 +52,6 @@ public class TemplatesProcMojo extends AbstractMojo {
         }
     }
     
-    /**
-     * Move templates into the installation from the defining XML     
-     * @throws MojoExecutionException
-     * @throws MojoFailureException
-     */
     public void execute() throws MojoExecutionException, MojoFailureException {
         Log log = getLog();
         if(templateNamespace == null) {
