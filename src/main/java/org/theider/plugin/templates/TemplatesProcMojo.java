@@ -20,10 +20,19 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class TemplatesProcMojo extends AbstractMojo {
 
+    /**
+     * @parameter
+     */
     private String descriptorFile;
     
+    /**
+     * @parameter
+     */
     private String configurationFile;
-    
+
+    /**
+     * @parameter
+     */
     private String templateNamespace;
     
     protected void copyFile(File sourceFile,File destinationFile) throws IOException {
