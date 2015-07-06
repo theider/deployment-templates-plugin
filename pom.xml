@@ -3,7 +3,7 @@
 
     <groupId>org.theider</groupId>
     <artifactId>deployment-templates-plugin</artifactId>
-    <version>1.0.18-SNAPSHOT</version>
+    <version>1.0.18</version>
     <packaging>maven-plugin</packaging>
 
     <name>deployment-templates-plugin</name>
@@ -16,7 +16,7 @@
         <connection>scm:git:git@github.com:theider/deployment-templates-plugin.git</connection>
         <url>scm:git:git@github.com:theider/deployment-templates-plugin.git</url>
         <developerConnection>scm:git:git@github.com:theider/deployment-templates-plugin.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>deployment-templates-plugin-1.0.18</tag>
     </scm>    
     <repositories>
         <repository>
