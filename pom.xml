@@ -22,7 +22,7 @@
         <repository>
             <id>prelude-releases</id>
             <name>prelude-releases</name>
-            <url>http://artifacts.preludevoice.com/artifactory/prelude-releases</url>            
+            <url>http://artifactory.preludevoice.com/artifactory/prelude-releases</url>            
             <snapshots>                
                 <enabled>false</enabled>
             </snapshots>
@@ -30,7 +30,7 @@
         <repository>
             <id>prelude-snapshots</id>
             <name>prelude-snapshots</name>
-            <url>http://artifacts.preludevoice.com/artifactory/prelude-snapshots</url>            
+            <url>http://artifactory.preludevoice.com/artifactory/prelude-snapshots</url>            
             <snapshots>                
                 <enabled>true</enabled>
             </snapshots>
@@ -40,12 +40,12 @@
         <snapshotRepository>
             <id>prelude-snapshots</id>
             <name>prelude-snapshots</name>
-            <url>http://artifacts.preludevoice.com/artifactory/prelude-snapshots</url>
+            <url>http://artifactory.preludevoice.com/artifactory/prelude-snapshots</url>
         </snapshotRepository>
         <repository>
             <id>prelude-releases</id>
             <name>prelude-releases</name>
-            <url>http://artifacts.preludevoice.com/artifactory/prelude-releases</url>            
+            <url>http://artifactory.preludevoice.com/artifactory/prelude-releases</url>            
         </repository>
     </distributionManagement>    
     <build>
